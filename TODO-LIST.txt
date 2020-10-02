@@ -1,0 +1,42 @@
+TP2 - TODO LIST
+
+0) CRIAR PROTOCOLO DE COMUNICACAO ENTRE SERVIDORES 
+    OS IPs/PORTAS DOS SERVIDORES DNS FICARARAO EM UM VETOR SEPARADO
+
+1) VERIFICAR SE EXITE ARQUIVO DE ENTRADA
+    Se SIM:
+        preencher vetor de structs com os hosts contidos no arquivo
+    se NAO:
+        nao preenche vetor (nao faz nada)
+
+2) Funcao auxiliar find_ip()
+    Criar funcao para dado um hostname, busca no vetor de hosts pelo ip correspondente
+    caso encontre:
+        retorna o ip
+    senao:
+        retorn 0
+
+3)COMANDO LINK()
+    Adiciona uma entrada no vetor de servidores
+    Antes de incluir, verifica que o enderece eh valido.
+
+4)COMANDO ADD() 
+    Funcao que cria entrada no vetor de hosts, relacionando um hostname a um endereco ip
+    Inicialmente percorre todo o vetor buscando se o host a ser incluido ja nao existe:
+    Caso encontre o host:
+        Atualiza o ip atual, com o novo ip recebido
+        Exibe mensagem de atualizacao para o usuario
+    Caso contrario (chegou ao final do vetor):
+        Inclui nova relacao hostname/ip no final do vetor
+        Exisme mensagem de inclusao com sucesso para o usuario
+
+5)COMANDO SEARCH()
+    Procura no vetor de hosts o endereco ip associado ao hostname dado, uma vez recuperado deve ser exibido ao usuario
+    Inicialmente a busca e feita no arquivo de host local (funcao auxiliar find_ip).
+    Caso nao seja encontrado a informacao para aquele hostname, eh feita uma chamada a outro servidor DNS que esteja conectado. As chamadas sao sequenciais (percorrer o vetor de servidores enviando o hostname que deseja-se saber o IP), caso o primeiro servidor nao tenha resposta sera feita um requisicao ao proximo.
+    Somente quando nenhum servidor conectado possuir a informacao devera se exibida uma msg para o usuario
+
+
+
+**6) Criar interface de linha de comandos simples
+    pesquisar por: simple command line interpreter c
