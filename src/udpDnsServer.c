@@ -12,8 +12,11 @@ int main(int argc, char **argv){
 
     Host dns_list[MAX_HOSTS];
     memset(dns_list, 0, sizeof(dns_list));
-
     int dns_list_size = 0;
+
+    Server server_list[MAX_SERVERS];
+    memset(server_list, 0, sizeof(server_list));
+    int server_list_size = 0;
     
     char buffer[MAX_HOSTNAME_LEN + MAX_IP_LEN + 10];
     //memset(buffer, 0, sizeof(buffer));

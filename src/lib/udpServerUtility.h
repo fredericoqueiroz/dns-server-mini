@@ -14,13 +14,21 @@
 #include <arpa/inet.h>
 
 #define MAX_HOSTS 1000
+#define MAX_SERVERS 10
+
 #define MAX_HOSTNAME_LEN 254
 #define MAX_IP_LEN 46
+#define MAX_SERVICE_LEN 6
 
 typedef struct Host{
     char hostname[MAX_HOSTNAME_LEN];
     char ip_adrr[MAX_IP_LEN];
 } Host;
+
+typedef struct Server{
+    char ip_adrr[MAX_IP_LEN];
+    char service[MAX_SERVICE_LEN];
+} Server;
 
 //Handle erro with user message
 void dieWithMessage(const char * file_name,int line_number, const char * format, ...);

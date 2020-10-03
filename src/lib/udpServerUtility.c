@@ -151,7 +151,6 @@ void runcmd(Host *dns_list, int *dns_list_size, char **cmd){
   }
 }
 
-// funcao com problema no retorno
 int find_ip(Host *dns_list, int *dns_list_size, Host host){
   int i;
   for(i=0; i<*dns_list_size; i++){
