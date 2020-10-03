@@ -126,3 +126,56 @@ void parsecmd(char *buf, char **tokens){
   }
   tokens[idx] = NULL;
 }
+
+void runcmd(Host *dns_list, int *dns_list_size, char **cmd){
+  Host host;
+  if(strcmp(cmd[0], "add") == 0){
+    strcpy(host.hostname, cmd[1]);
+    strcpy(host.ip_adrr, cmd[2]);
+    fprintf(stdout, "host.hostname: %s\n", host.hostname);
+    fprintf(stdout, "host.ip_adrr: %s\n", host.ip_adrr);
+    add_host(dns_list, dns_list_size, host);
+    fprintf(stdout, "dns_list_size: %d\n", *dns_list_size);
+  }
+  else if(strcmp(cmd[0], "search") == 0){
+    //COMANDO SEARCH
+    fprintf(stdout, "Command: %s\n", cmd[0]);
+  }
+  else if(strcmp(cmd[0], "link") == 0){
+    //COMANDO LINK
+    fprintf(stdout, "Command: %s\n", cmd[0]);
+  }
+  else{
+    fprintf(stdout, "Unknown command: %s\n", cmd[0]);
+  }
+}
+
+// funcao com problema no retorno
+int find_ip(Host *dns_list, int *dns_list_size, Host host){
+  int i;
+  for(i=0; i<*dns_list_size; i++){
+    if(strcmp(dns_list[i].hostname, host.hostname) == 0){
+      return i; // Return the host index found
+    }
+  }
+  return -1; // Host not found on dns_list
+}
+
+void add_host(Host *dns_list, int *dns_list_size, Host host){
+  int i;
+  int host_idx = -1;
+  fprintf(stdout, "host_idx: %d\n", host_idx);
+  host_idx = find_ip(dns_list, dns_list_size, host);
+  fprintf(stdout, "host_idx: %d\n", host_idx);
+  if(host_idx == -1){
+    stpcpy(dns_list[*dns_list_size].hostname, host.hostname);
+    strcpy(dns_list[*dns_list_size].ip_adrr, host.ip_adrr);
+    fprintf(stdout,"New Host %s IP %s added to the hostlist\n", dns_list[*dns_list_size].hostname, dns_list[*dns_list_size].ip_adrr);
+    *dns_list_size += 1;
+    fprintf(stdout, "host_idx: %d\n", host_idx);
+  }
+  else{
+    strcpy(dns_list[host_idx].ip_adrr, host.ip_adrr);
+    fprintf(stdout,"Host %s updated to IP %s\n", dns_list[host_idx].hostname, dns_list[host_idx].ip_adrr);
+  }
+}

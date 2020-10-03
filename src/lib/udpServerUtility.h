@@ -17,8 +17,7 @@
 #define MAX_HOSTNAME_LEN 254
 #define MAX_IP_LEN 46
 
-typedef struct Host
-{
+typedef struct Host{
     char hostname[MAX_HOSTNAME_LEN];
     char ip_adrr[MAX_IP_LEN];
 } Host;
@@ -36,5 +35,11 @@ void *handleConnection(void *service);
 int getcmd(char *buf, int nbuf);
 
 void parsecmd(char *buf, char **tokens);
+
+void runcmd(Host *dns_list, int *dns_list_size, char **cmd);
+
+int find_ip(Host *dns_list, int *dns_list_size, Host host);
+
+void add_host(Host *dns_list, int *dns_list_size, Host host);
 
 #endif

@@ -12,7 +12,7 @@ TP2 - TODO LIST
 2) Funcao auxiliar find_ip()
     Criar funcao para dado um hostname, busca no vetor de hosts pelo ip correspondente
     caso encontre:
-        retorna o ip
+        retorna o indice do host encontrado
     senao:
         retorn 0
 
@@ -37,6 +37,10 @@ TP2 - TODO LIST
     Somente quando nenhum servidor conectado possuir a informacao devera se exibida uma msg para o usuario
 
 
-
 **6) Criar interface de linha de comandos simples
     pesquisar por: simple command line interpreter c
+ 
+ 
+ 
+ 
+ 7) criar funcao PRINT HOSTLIST

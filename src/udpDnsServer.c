@@ -10,10 +10,14 @@ int main(int argc, char **argv){
     if(argc < 2 || argc > 3)
         dieWithMessage(__FILE__, __LINE__, "Sintaxe de Uso: %s <Server Port> [startup_file]", argv[0]);
 
-    pthread_t thread_id;
     
     Host dns_list[MAX_HOSTS];
+    memset(dns_list, '\0', sizeof(dns_list));
     int dns_list_size = 0;
+
+    //fprintf(stdout, "sizeof(dns_list): %ld\n", sizeof(dns_list));
+
+    pthread_t thread_id;
 
     char buffer[254];
 
@@ -44,10 +48,11 @@ int main(int argc, char **argv){
     
     while(getcmd(buffer, sizeof(buffer)) >= 0){
         parsecmd(buffer, cmd);
-        fprintf(stdout, "cmd[0]: %s\n", cmd[0]); // cmd[0] = comando / resto = parametros
-        /* fprintf(stdout, "cmd[1]: %s\n", cmd[1]);
+        /* fprintf(stdout, "cmd[0]: %s\n", cmd[0]);
+        fprintf(stdout, "cmd[1]: %s\n", cmd[1]);
         fprintf(stdout, "cmd[2]: %s\n", cmd[2]); */
-
+        runcmd(dns_list, &dns_list_size, cmd);
+        
     }
     
     return 0;
