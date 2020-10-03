@@ -1,0 +1,8 @@
+add ufmg.br 150.164.76.8
+add google.com 2800:3f0:4004:808::200e
+add b3.com.br 177.54.220.208
+add spotify.com 177.54.220.208
+add github.com 140.82.112.4
+add github.com.br 208.113.218.221
+add amazon.com 176.32.98.166
+add amazon.com.br 54.239.26.87

@@ -106,6 +106,7 @@ void *handleConnection(void *service){
 }
 
 int getcmd(char *buf, int nbuf){
+  fprintf(stdout, "\n");
   if(isatty(fileno(stdin)))
       fprintf(stdout, "$ ");
   memset(buf, 0, nbuf);
@@ -132,10 +133,7 @@ void runcmd(Host *dns_list, int *dns_list_size, char **cmd){
   if(strcmp(cmd[0], "add") == 0){
     strcpy(host.hostname, cmd[1]);
     strcpy(host.ip_adrr, cmd[2]);
-    fprintf(stdout, "host.hostname: %s\n", host.hostname);
-    fprintf(stdout, "host.ip_adrr: %s\n", host.ip_adrr);
     add_host(dns_list, dns_list_size, host);
-    fprintf(stdout, "dns_list_size: %d\n", *dns_list_size);
   }
   else if(strcmp(cmd[0], "search") == 0){
     //COMANDO SEARCH
@@ -144,6 +142,9 @@ void runcmd(Host *dns_list, int *dns_list_size, char **cmd){
   else if(strcmp(cmd[0], "link") == 0){
     //COMANDO LINK
     fprintf(stdout, "Command: %s\n", cmd[0]);
+  }
+  else if(strcmp(cmd[0], "hostlist") == 0){
+    print_hostlist(dns_list, *dns_list_size);
   }
   else{
     fprintf(stdout, "Unknown command: %s\n", cmd[0]);
@@ -164,18 +165,25 @@ int find_ip(Host *dns_list, int *dns_list_size, Host host){
 void add_host(Host *dns_list, int *dns_list_size, Host host){
   int i;
   int host_idx = -1;
-  fprintf(stdout, "host_idx: %d\n", host_idx);
   host_idx = find_ip(dns_list, dns_list_size, host);
-  fprintf(stdout, "host_idx: %d\n", host_idx);
   if(host_idx == -1){
     stpcpy(dns_list[*dns_list_size].hostname, host.hostname);
     strcpy(dns_list[*dns_list_size].ip_adrr, host.ip_adrr);
-    fprintf(stdout,"New Host %s IP %s added to the hostlist\n", dns_list[*dns_list_size].hostname, dns_list[*dns_list_size].ip_adrr);
+    fprintf(stdout,"New Host added: Hostname [%s] \t\tIP [%s]\n", dns_list[*dns_list_size].hostname, dns_list[*dns_list_size].ip_adrr);
     *dns_list_size += 1;
-    fprintf(stdout, "host_idx: %d\n", host_idx);
   }
   else{
     strcpy(dns_list[host_idx].ip_adrr, host.ip_adrr);
-    fprintf(stdout,"Host %s updated to IP %s\n", dns_list[host_idx].hostname, dns_list[host_idx].ip_adrr);
+    fprintf(stdout,"Host address updated: Hostname [%s] \t\tIP [%s]\n", 
+    dns_list[host_idx].hostname, dns_list[host_idx].ip_adrr);
   }
+}
+
+void print_hostlist(Host *dns_list, int dns_list_size){
+  int i;
+  fprintf(stdout, "[%d] known host(s) -------------------------------------------------\n", dns_list_size);
+  for(i=0; i<dns_list_size; i++){
+    fprintf(stdout, "%d - Hostname: %s\t\t IP: %s\n", i+1, dns_list[i].hostname, dns_list[i].ip_adrr);
+  }
+  fprintf(stdout, "--------------------------------------------------------------------\n");
 }

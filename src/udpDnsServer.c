@@ -10,49 +10,48 @@ int main(int argc, char **argv){
     if(argc < 2 || argc > 3)
         dieWithMessage(__FILE__, __LINE__, "Sintaxe de Uso: %s <Server Port> [startup_file]", argv[0]);
 
-    
     Host dns_list[MAX_HOSTS];
-    memset(dns_list, '\0', sizeof(dns_list));
+    memset(dns_list, 0, sizeof(dns_list));
+
     int dns_list_size = 0;
-
-    //fprintf(stdout, "sizeof(dns_list): %ld\n", sizeof(dns_list));
-
-    pthread_t thread_id;
-
-    char buffer[254];
+    
+    char buffer[MAX_HOSTNAME_LEN + MAX_IP_LEN + 10];
+    //memset(buffer, 0, sizeof(buffer));
+    char *cmd[3];
 
     char *service = argv[1];
-/* 
     char *startup_file;
-    if(argc == 3){
-        startup_file = argv[2];
-        FILE *fd;
-        fd = fopen(startup_file, "r");
-        if(startup_file == NULL)
-            fprintf(stdout, "Can not open file %s", startup_file);
-        else{
-            while(!feof(startup_file)){
-                fscanf(startup_file, "%s %s", dns_list[dns_list_size].hostname,);
-                dns_list_size++;
-            }
-        }
-    }
- */
-    
+
     // Create thread for UDP socket
+    pthread_t thread_id;
     if (pthread_create(&thread_id, NULL, handleConnection, (void*) service) < 0)
         dieWithMessage(__FILE__, __LINE__, "error: pthread_create(): %s",strerror(errno));
 
-    //const char delim[2] = ""
-    char *cmd[3];
-    
+    // Load startup_file
+    if(argc == 3){
+        startup_file = argv[2];
+        FILE *startup_fd;
+        startup_fd = fopen(startup_file, "r");
+        if(startup_file == NULL)
+            fprintf(stdout, "Can not open file %s\n", startup_file);
+        else{
+            fprintf(stdout, "Loading file [%s] ...\n", startup_file);
+            while(!feof(startup_fd)){
+                memset(buffer, 0, sizeof(buffer));
+                fgets(buffer, sizeof(buffer), startup_fd);
+                parsecmd(buffer, cmd);
+                //check if the command is add
+                if(strcmp(cmd[0], "add") == 0 || strcmp(cmd[0], "link") == 0)
+                    runcmd(dns_list, &dns_list_size, cmd);
+                else
+                    continue;
+            }
+        }
+    }
+
     while(getcmd(buffer, sizeof(buffer)) >= 0){
         parsecmd(buffer, cmd);
-        /* fprintf(stdout, "cmd[0]: %s\n", cmd[0]);
-        fprintf(stdout, "cmd[1]: %s\n", cmd[1]);
-        fprintf(stdout, "cmd[2]: %s\n", cmd[2]); */
         runcmd(dns_list, &dns_list_size, cmd);
-        
     }
     
     return 0;

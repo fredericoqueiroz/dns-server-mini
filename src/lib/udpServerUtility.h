@@ -42,4 +42,6 @@ int find_ip(Host *dns_list, int *dns_list_size, Host host);
 
 void add_host(Host *dns_list, int *dns_list_size, Host host);
 
+void print_hostlist(Host *dns_list, int dns_list_size);
+
 #endif
