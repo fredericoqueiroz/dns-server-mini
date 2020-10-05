@@ -116,21 +116,35 @@ void *handleConnection(void *arguments){
     if(numBytesRcvd < 0)
       dieWithMessage(__FILE__, __LINE__, "error: recvfrom(): %s",strerror(errno));
 
-    fprintf(stdout, "Handling message from server ");
+    fprintf(stdout, "Handling request from server ");
     printSocketAddress((struct sockaddr *) &clientAddr, stdout);
     fprintf(stdout, "\n");
 
     // SEARCH FUNCTION
     Host host;
-    host.ip_adrr[0] = '0';
-    if(buffer[0] == '1'){
-      strncpy(host.hostname, buffer, 1);
+    host.ip_adrr[0] = '\0';
+    if(buffer[0] == '1'){ // Check message type
+      char * ip_adrr = buffer + 1;
+      strcpy(host.hostname, ip_adrr);
+      fprintf(stdout, "Searching for %s IP Address...\n", host.hostname);
       search(&host, args->dns_list, args->dns_list_size, args->server_list, args->server_list_size);
-    }
 
-    if(host.ip_adrr[0] == '\0'){
       memset(buffer, 0, sizeof(buffer));
-      strcpy(buffer, "2-1");
+
+      if(host.ip_adrr[0] == '\0'){
+        strcpy(buffer, "2-1");
+        fprintf(stdout, "IP not found\n");
+      }
+      else{
+        buffer[0] = '2';
+        strcat(buffer, host.ip_adrr);
+        fprintf(stdout, "IP found: %s\n", host.ip_adrr);
+      }
+
+      fprintf(stdout, "Sending response to server ");
+      printSocketAddress((struct sockaddr *) &clientAddr, stdout);
+      fprintf(stdout, "\n");
+
       ssize_t numBytesSent = sendto(serverSocket, buffer, sizeof(buffer), 0,
         (struct sockaddr *) &clientAddr, sizeof(clientAddr));
       
@@ -255,7 +269,7 @@ void search(Host *host, Host *dns_list, int *dns_list_size, Server *server_list,
   int i;
   int host_idx = -1;
   host_idx = find_ip(dns_list, dns_list_size, *host);
-  if(host_idx != -1){
+  if(host_idx != -1){ // IP found on hostlist
     //fprintf(stdout, "%s IP: %s\n", dns_list[host_idx].hostname, dns_list[host_idx].ip_adrr);
     strcpy(host->ip_adrr, dns_list[host_idx].ip_adrr);
   }
@@ -298,18 +312,19 @@ void search(Host *host, Host *dns_list, int *dns_list_size, Server *server_list,
       if(numBytes < 0)
         dieWithMessage(__FILE__, __LINE__, "error: recvfrom(): %s",strerror(errno));
     
-      freeaddrinfo(servAddr);
-
-      close(serverSocket);
-
       if(strcmp(response, "2-1") == 0){
         //fprintf(stdout, "Hostname %s not found", host.hostname);
         strcpy(host->ip_adrr, "\0");
       }
       else{
-        strncpy(host->ip_adrr, response, 1);
+        char *ip_adrr = response + 1;
+        strcpy(host->ip_adrr, ip_adrr);
         //fprintf(stdout, "%s IP: %s\n", host.hostname, host.ip_adrr);
       }
+
+      freeaddrinfo(servAddr);
+
+      //close(serverSocket);
     }
   }
 }
