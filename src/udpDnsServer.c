@@ -18,17 +18,13 @@ int main(int argc, char **argv){
     memset(server_list, 0, sizeof(server_list));
     int server_list_size = 0;
     
-    char buffer[MAX_HOSTNAME_LEN + MAX_IP_LEN + 10];
+    char buffer[BUFFER_SIZE];
     //memset(buffer, 0, sizeof(buffer));
     char *cmd[3];
 
     char *service = argv[1];
     char *startup_file;
 
-    // Create thread for UDP socket
-    pthread_t thread_id;
-    if (pthread_create(&thread_id, NULL, handleConnection, (void*) service) < 0)
-        dieWithMessage(__FILE__, __LINE__, "error: pthread_create(): %s",strerror(errno));
 
     // Load startup_file
     if(argc == 3){
@@ -45,16 +41,29 @@ int main(int argc, char **argv){
                 parsecmd(buffer, cmd);
                 //check if the command is add
                 if(strcmp(cmd[0], "add") == 0 || strcmp(cmd[0], "link") == 0)
-                    runcmd(dns_list, &dns_list_size, cmd);
+                    runcmd(dns_list, &dns_list_size, server_list, &server_list_size, cmd);
                 else
                     continue;
             }
         }
     }
 
+    Args connection_args;
+    connection_args.service = service;
+    connection_args.dns_list = dns_list;
+    connection_args.dns_list_size = &dns_list_size;
+    connection_args.server_list = server_list;
+    connection_args.server_list_size = &server_list_size;
+
+    // Create thread for UDP socket
+    pthread_t thread_id;
+    if (pthread_create(&thread_id, NULL, handleConnection, (void*) &connection_args) < 0)
+        dieWithMessage(__FILE__, __LINE__, "error: pthread_create()");
+
+    //fprintf(stdout, "$ ");
     while(getcmd(buffer, sizeof(buffer)) >= 0){
         parsecmd(buffer, cmd);
-        runcmd(dns_list, &dns_list_size, cmd);
+        runcmd(dns_list, &dns_list_size, server_list, &server_list_size, cmd);
     }
     
     return 0;

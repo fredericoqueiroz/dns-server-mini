@@ -6,3 +6,4 @@ add github.com 140.82.112.4
 add github.com.br 208.113.218.221
 add amazon.com 176.32.98.166
 add amazon.com.br 54.239.26.87
+link 0.0.0.0 51512

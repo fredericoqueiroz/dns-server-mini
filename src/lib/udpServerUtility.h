@@ -20,6 +20,8 @@
 #define MAX_IP_LEN 46
 #define MAX_SERVICE_LEN 6
 
+#define BUFFER_SIZE MAX_HOSTNAME_LEN + MAX_IP_LEN + 10
+
 typedef struct Host{
     char hostname[MAX_HOSTNAME_LEN];
     char ip_adrr[MAX_IP_LEN];
@@ -30,6 +32,14 @@ typedef struct Server{
     char service[MAX_SERVICE_LEN];
 } Server;
 
+typedef  struct ConnectionArgs{
+    char *service;
+    Host *dns_list;
+    int *dns_list_size;
+    Server *server_list;
+    int *server_list_size;
+} Args;
+
 //Handle erro with user message
 void dieWithMessage(const char * file_name,int line_number, const char * format, ...);
 
@@ -38,18 +48,24 @@ void printSocketAddress(const struct sockaddr *address, FILE *stream);
 
 int setupServerSocket(const char *service);
 
-void *handleConnection(void *service);
+void *handleConnection(void *arguments);
 
 int getcmd(char *buf, int nbuf);
 
 void parsecmd(char *buf, char **tokens);
 
-void runcmd(Host *dns_list, int *dns_list_size, char **cmd);
+void runcmd(Host *dns_list, int *dns_list_size, Server *server_list, int *server_list_size, char **cmd);
 
 int find_ip(Host *dns_list, int *dns_list_size, Host host);
 
 void add_host(Host *dns_list, int *dns_list_size, Host host);
 
 void print_hostlist(Host *dns_list, int dns_list_size);
+
+void link_server(Server *server_list, int *server_list_size, Server server);
+
+void print_serverlist(Server *server_list, int server_list_size);
+
+void search(Host *host, Host *dns_list, int *dns_list_size, Server *server_list, int *server_list_size);
 
 #endif

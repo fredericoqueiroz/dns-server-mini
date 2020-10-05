@@ -15,7 +15,8 @@ COMANDO SEARCH()
     Somente quando nenhum servidor conectado possuir a informacao devera se exibida uma msg para o usuario
 
 
-
+THREAD DO SERVIDOR USA FUNCAO SEARCH
+    CONSIDERAR QUE NAO HAVERAO LOOPS
 
 
 
