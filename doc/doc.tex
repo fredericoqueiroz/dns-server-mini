@@ -1,0 +1,102 @@
+\documentclass[12pt]{article}
+\usepackage[brazil]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{amsthm,amsfonts,amsmath}
+\usepackage[a4paper,margin={1in,1in},vmargin={0.5in,0.5in}]{geometry}
+\usepackage{graphicx,color}
+\usepackage[font=small,labelfont=bf]{caption}
+\usepackage[table,xcdraw]{xcolor}
+\usepackage{listings}
+\usepackage{verbatim}
+\usepackage{hyperref}
+
+\begin{document}
+
+\title{%
+    Documentação Trabalho Prático 2 \\
+    \vspace{2em}
+    \large DCC023 - Redes de Computadores \\
+    UNIVERSIDADE FEDERAL DE MINAS GERAIS}
+
+
+\author{Frederico Ribeiro Queiroz}
+\maketitle
+
+\section{Introdução}
+O objetivo deste trabalho é implementar uma simulação de um servidor DNS simplificado. 
+Servidores DNS (Domain Name System) são responsáveis por traduzir nomes de domínios mais facilmente memorizáveis em endereços IP (resolução de nome).
+
+\section{Soluções Implementadas}
+O servidor DNS armazena hostnames associados aos seus respectivos endereços ip. Além disso, quando um servidor não encontra o endereço de um determinado domínio em sua lista, ele busca o endereço em outros servidores DNS que estiverem em sua `serverlist'.
+A comunicação entre os servidores é feita utilizando soquetes UDP, podendo ser em IPv4 ou IPv6 de forma transparente.
+Ela consiste apenas dois tipos de mensagem: requisição e resposta.
+
+\subsection{Interface de linha de comando}
+Foi criada uma interface de linha de comando simples, que utiliza as seguintes funções: \par
+\vspace{1em}
+\emph{\textbf{getcmd()}}: lê dados da entrada padrão (stdin) e grava em um buffer. \par
+\vspace{0.5em}
+\emph{\textbf{parsecmd()}}: separa o comando e seus respectivos parâmetros gravados no buffer. \par
+\vspace{0.5em}
+\emph{\textbf{runcmd()}}: interpreta o comando digitado, direcionando para a função responsável. \par
+
+\vspace{1em}
+\noindent
+A função \emph{\textbf{runcmd()}} é capaz de interpretar os seguintes comandos: \par
+
+
+\begin{verbatim}
+add <hostname> <ip> - adiciona novo relacionamento de hostname 
+                      e ip na lista de hosts (hostlist).
+
+link <ip> <porta>   - conecta à outro servidor DNS e adiciona 
+                      na lista de servidores (servelist).
+                    
+hostlist            - imprime na tela a lista de hostnames do
+                      servidor DNS.
+
+serverlist          - imprime na tela a lista de servidores
+                      conectados.
+
+search <hostname>   - procura pelo hostname, retornando seu ip
+                      caso seja encontrado.
+\end{verbatim}
+
+\subsubsection{Comando search}
+Por ser um comando de considerável complexidade, sua funcionalidade será melhor detalhada nesta subseção.
+O comando search recebe como parâmetro um hostname, e tenta encontrar o IP associado ao mesmo. Caso encontre, o IP é exibido na saída padrão. \par
+\noindent Primeiramente, o servidor busca pelo hostname em sua própria lista de hosts. 
+Se o hostname não for encontrado, o servidor passsa a enviar mensagens requisitando o IP relacionado ao hostname para cada servidor da sua lista de servidores, de maneira ordenada e serializada.
+
+\section{Compilação e Execução dos Programas}
+
+Foi criado um arquivo Makefile para compilar o programa. Ao executar o comando \emph{make} na raíz do projeto, o código é compilado e é gerado um executável \textbf{servidor\_dns}. \par
+
+\begin{itemize}
+    \item Sintaxe de uso do \textbf{servidor\_dns}:
+    \begin{verbatim}
+    ./servidor_dns <porta> [startup_file]
+    \end{verbatim}
+\end{itemize}
+
+\noindent O argumento \emph{startup\_file} (opcional) é o nome de um arquivo de texto contendo comandos `add' e `link'. Qualquer outro comando é desprezado durante a leitura do arquivo. \par
+
+\noindent Após inicialização do servidor, o mesmo executa até receber um sinal de interrupção do teclado (ctrl-c).
+
+\newpage
+
+\section{Referências}
+
+A principal referência utilizada para construçao deste projeto foi a leitura do livro ``TCP IP Sockets in C, Second Edition Practical Guide for Programmers'', disponibilizado pelo professor no moodle da turma TW. \par
+
+
+\begin{itemize}
+    \item TCP IP Sockets in C, Second Edition Practical Guide for Programmers.pdf
+    \item Documentação do manual linux: \href{https://man7.org/linux/man-pages/man7/pthreads.7.html}{pthreads}
+    \item Documentação da função \href{https://linux.die.net/man/3/strtok}{strtok(3)}
+    \item Slide \href{https://docente.ifrn.edu.br/diegopereira/disciplinas/2012/aplicacoes-de-redes-de-computadores/aula-15-camada-de-aplicacao-dns/view}{Camada de Aplicação (DNS)}
+\end{itemize}
+
+
+
+\end{document}
